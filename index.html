@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14161f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Guia Rápido — Revisão</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14161f;
+    --ink-2:#1b1e2a;
+    --ink-3:#232738;
+    --ink-border:#2c3040;
+    --ink-text:#eae7dd;
+    --ink-muted:#8d90a0;
+    --accent:#c99a3f;
+    --accent-soft:#3a3320;
+
+    --paper:#f7f1e4;
+    --paper-edge:#ece3ce;
+    --paper-ink:#2c2416;
+    --paper-muted:#7c7260;
+
+    --font-ui:'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-read:'Literata', Georgia, 'Times New Roman', serif;
+
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:var(--ink);
+    font-family:var(--font-ui);
+    -webkit-tap-highlight-color:transparent;
+  }
+  body{
+    color:var(--ink-text);
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    overflow-x:hidden;
+  }
+
+  /* ---------- TELA LISTA ---------- */
+  #telaLista{
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+  }
+  header.topo{
+    padding:22px 20px 14px;
+    border-bottom:1px solid var(--ink-border);
+  }
+  header.topo .linha-titulo{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  }
+  header.topo h1{
+    margin:0;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:-0.01em;
+  }
+  header.topo p.sub{
+    margin:4px 0 0;
+    font-size:13px;
+    color:var(--ink-muted);
+  }
+  #btnAtualizar{
+    flex-shrink:0;
+    width:38px;height:38px;
+    border-radius:10px;
+    border:1px solid var(--ink-border);
+    background:var(--ink-2);
+    color:var(--ink-text);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  #btnAtualizar svg{width:18px;height:18px;}
+  #btnAtualizar.girando svg{animation:girar 0.8s linear infinite;}
+  @keyframes girar{ to{ transform:rotate(360deg); } }
+
+  .caixa-busca{
+    margin-top:14px;
+    display:flex;align-items:center;gap:8px;
+    background:var(--ink-2);
+    border:1px solid var(--ink-border);
+    border-radius:12px;
+    padding:10px 12px;
+  }
+  .caixa-busca svg{width:16px;height:16px;color:var(--ink-muted);flex-shrink:0;}
+  .caixa-busca input{
+    border:none;background:transparent;outline:none;
+    color:var(--ink-text);font-family:var(--font-ui);font-size:15px;
+    width:100%;
+  }
+  .caixa-busca input::placeholder{color:var(--ink-muted);}
+
+  #statusSync{
+    margin-top:10px;
+    font-size:11.5px;
+    color:var(--ink-muted);
+  }
+  #statusSync.offline{color:#e0a45c;}
+
+  #listaConteudo{
+    flex:1;
+    overflow-y:auto;
+    padding:6px 0 40px;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .grupo-materia{
+    border-bottom:1px solid var(--ink-border);
+  }
+  .grupo-materia .cab-materia{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:14px 20px;
+    cursor:pointer;
+  }
+  .grupo-materia .cab-materia .nome{
+    font-size:15px;font-weight:700;color:var(--ink-text);
+  }
+  .grupo-materia .cab-materia .contagem{
+    font-size:12px;color:var(--ink-muted);
+    white-space:nowrap;
+  }
+  .grupo-materia .cab-materia .seta{
+    width:14px;height:14px;color:var(--ink-muted);
+    transition:transform .18s ease;
+    flex-shrink:0;
+  }
+  .grupo-materia.fechado .cab-materia .seta{transform:rotate(-90deg);}
+  .grupo-materia.fechado .lista-assuntos{display:none;}
+
+  .lista-assuntos{padding:0 0 8px;}
+  .linha-assunto{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:11px 20px 11px 30px;
+  }
+  .linha-assunto.com-guia{cursor:pointer;}
+  .linha-assunto.com-guia:active{background:var(--ink-2);}
+  .linha-assunto .nome-assunto{
+    font-size:14px;line-height:1.4;
+    color:var(--ink-text);
+  }
+  .linha-assunto.sem-guia .nome-assunto{color:var(--ink-muted);}
+  .linha-assunto .marcador{
+    flex-shrink:0;
+    width:8px;height:8px;border-radius:50%;
+    background:var(--accent);
+  }
+  .linha-assunto.sem-guia .marcador{
+    background:transparent;border:1px solid var(--ink-border);
+  }
+
+  .estado-vazio{
+    padding:60px 30px;text-align:center;color:var(--ink-muted);font-size:14px;line-height:1.6;
+  }
+  .estado-vazio button{
+    margin-top:16px;
+    padding:10px 18px;
+    border-radius:10px;
+    border:1px solid var(--accent);
+    background:transparent;color:var(--accent);
+    font-family:var(--font-ui);font-weight:600;font-size:13.5px;
+    cursor:pointer;
+  }
+
+  /* ---------- TELA LEITURA (a "página do livro") ---------- */
+  #telaLeitura{
+    position:fixed;inset:0;
+    background:var(--paper);
+    transform:translateY(100%);
+    opacity:0;
+    transition:transform .32s cubic-bezier(.22,.68,0,1), opacity .28s ease;
+    z-index:50;
+    display:flex;flex-direction:column;
+  }
+  #telaLeitura.aberta{
+    transform:translateY(0);
+    opacity:1;
+  }
+  #telaLeitura .barra-leitura{
+    background:var(--ink);
+    color:var(--ink-text);
+    padding:14px 16px;
+    padding-top:calc(14px + env(safe-area-inset-top,0px));
+    display:flex;align-items:center;gap:12px;
+    flex-shrink:0;
+  }
+  #btnVoltar{
+    width:34px;height:34px;flex-shrink:0;
+    border-radius:9px;border:1px solid var(--ink-border);
+    background:var(--ink-2);color:var(--ink-text);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  #btnVoltar svg{width:17px;height:17px;}
+  .titulos-leitura{min-width:0;}
+  .titulos-leitura .assunto-titulo{
+    font-size:14.5px;font-weight:700;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .titulos-leitura .materia-titulo{
+    font-size:11.5px;color:var(--ink-muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+
+  #paginaLeitura{
+    flex:1;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:30px 22px 60px;
+    background:
+      linear-gradient(90deg, var(--paper-edge) 0px, transparent 14px);
+  }
+  #paginaLeitura .corpo-guia{
+    max-width:640px;
+    margin:0 auto;
+    font-family:var(--font-read);
+    font-size:18px;
+    line-height:1.85;
+    color:var(--paper-ink);
+    white-space:pre-wrap;
+    word-wrap:break-word;
+  }
+  #paginaLeitura .rodape-guia{
+    max-width:640px;
+    margin:26px auto 0;
+    font-family:var(--font-ui);
+    font-size:11.5px;
+    color:var(--paper-muted);
+    border-top:1px solid var(--paper-edge);
+    padding-top:12px;
+  }
+
+  mark.g-mark{
+    background:transparent;
+    color:inherit;
+    border-radius:3px;
+    padding:0.02em 0.28em;
+    box-decoration-break:clone;
+    -webkit-box-decoration-break:clone;
+  }
+  mark.g-mark-amarelo{background:#f6dd8d;}
+  mark.g-mark-verde{background:#bfe0c3;}
+  mark.g-mark-vermelho{background:#f2c2c2;}
+  mark.g-mark-azul{background:#c3d8ef;}
+  mark.g-mark-rosa{background:#f1cadf;}
+  mark.g-mark-laranja{background:#f4d0a2;}
+  mark.g-mark-roxo{background:#ddc9ef;}
+  mark.g-mark-cinza{background:#dfe1e7;}
+  mark.g-mark-marrom{background:#ddc6a2;}
+  mark.g-mark-branco{background:transparent;padding:0;}
+  #paginaLeitura strong{font-weight:700;}
+
+  .toast{
+    position:fixed;left:50%;bottom:24px;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--ink-3);color:var(--ink-text);
+    border:1px solid var(--ink-border);
+    padding:10px 16px;border-radius:10px;
+    font-size:13px;
+    opacity:0;
+    transition:opacity .2s ease, transform .2s ease;
+    z-index:100;
+    max-width:86%;
+    text-align:center;
+  }
+  .toast.mostrar{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+  <div id="telaLista">
+    <header class="topo">
+      <div class="linha-titulo">
+        <div>
+          <h1>Guia Rápido</h1>
+          <p class="sub">Revisão por assunto</p>
+        </div>
+        <button id="btnAtualizar" title="Atualizar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+        </button>
+      </div>
+      <div class="caixa-busca">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input type="text" id="campoBusca" placeholder="Buscar assunto...">
+      </div>
+      <div id="statusSync">Carregando...</div>
+    </header>
+    <div id="listaConteudo"></div>
+  </div>
+
+  <div id="telaLeitura">
+    <div class="barra-leitura">
+      <button id="btnVoltar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="titulos-leitura">
+        <div class="assunto-titulo" id="tituloAssunto">Assunto</div>
+        <div class="materia-titulo" id="tituloMateria">Matéria</div>
+      </div>
+    </div>
+    <div id="paginaLeitura">
+      <div class="corpo-guia" id="corpoGuia"></div>
+      <div class="rodape-guia" id="rodapeGuia"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+  var SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw818Fj3ENQ_5jk9PEdY4bNylceIProGAaBJW5N63_zpynQry4dP5m4qla_R281IA5-/exec";
+  var SHEETS_API_TOKEN = "Mesopetamenos#12";
+
+  var CACHE_ESTADO = "guiaMobile_estado_cache";
+  var CACHE_GUIAS = "guiaMobile_guias_cache";
+  var CACHE_SYNC = "guiaMobile_ultima_sync";
+
+  var GUIA_CORES = ["amarelo","verde","vermelho","azul","rosa","laranja","roxo","cinza","marrom","branco"];
+
+  var materias = [];
+  var guias = {};
+  var filtroAtual = "";
+  var _jsonpContador = 0;
+
+  function jsonpRequest(url){
+    return new Promise(function(resolve, reject){
+      var callbackName = "guiaMobileCallback_" + (_jsonpContador++);
+      var script = document.createElement("script");
+      var timeoutId = setTimeout(function(){
+        cleanup();
+        reject(new Error("timeout"));
+      }, 10000);
+      function cleanup(){
+        delete window[callbackName];
+        if(script.parentNode) script.parentNode.removeChild(script);
+        clearTimeout(timeoutId);
+      }
+      window[callbackName] = function(data){
+        cleanup();
+        resolve(data);
+      };
+      script.onerror = function(){
+        cleanup();
+        reject(new Error("falha ao carregar"));
+      };
+      script.src = url + (url.indexOf("?") > -1 ? "&" : "?") + "callback=" + callbackName;
+      document.body.appendChild(script);
+    });
+  }
+
+  function carregarEstadoRemoto(){
+    return jsonpRequest(SHEETS_API_URL + "?token=" + encodeURIComponent(SHEETS_API_TOKEN))
+      .then(function(data){
+        if(!data || data.error || !data.value) throw new Error("sem dados");
+        var estado = JSON.parse(data.value);
+        try{ localStorage.setItem(CACHE_ESTADO, data.value); }catch(e){}
+        return estado;
+      });
+  }
+
+  function carregarGuiasRemoto(){
+    return jsonpRequest(SHEETS_API_URL + "?token=" + encodeURIComponent(SHEETS_API_TOKEN) + "&action=guias")
+      .then(function(data){
+        if(!data || data.error) throw new Error("sem dados");
+        var mapa = data.guias || {};
+        try{ localStorage.setItem(CACHE_GUIAS, JSON.stringify(mapa)); }catch(e){}
+        return mapa;
+      });
+  }
+
+  function carregarDados(manual){
+    var btn = document.getElementById("btnAtualizar");
+    btn.classList.add("girando");
+    var status = document.getElementById("statusSync");
+    status.classList.remove("offline");
+    status.textContent = "Sincronizando...";
+
+    Promise.all([carregarEstadoRemoto(), carregarGuiasRemoto()])
+      .then(function(res){
+        materias = (res[0] && res[0].materias) ? res[0].materias : [];
+        guias = res[1] || {};
+        var agora = new Date();
+        try{ localStorage.setItem(CACHE_SYNC, agora.toISOString()); }catch(e){}
+        atualizarStatus(agora, false);
+        renderLista();
+        if(manual) mostrarToast("Dados atualizados.");
+      })
+      .catch(function(err){
+        console.error("Não foi possível sincronizar, tentando cache local.", err);
+        var okCache = carregarDoCache();
+        if(okCache){
+          var syncSalvo = localStorage.getItem(CACHE_SYNC);
+          atualizarStatus(syncSalvo ? new Date(syncSalvo) : null, true);
+          renderLista();
+          if(manual) mostrarToast("Sem conexão. Mostrando a última versão salva.");
+        } else {
+          status.textContent = "Não foi possível carregar. Verifique sua internet.";
+          status.classList.add("offline");
+          document.getElementById("listaConteudo").innerHTML =
+            "<div class='estado-vazio'>Não deu pra buscar os guias agora, e ainda não existe nenhuma versão salva neste aparelho.<br><button id='btnTentarDeNovo'>Tentar de novo</button></div>";
+          var b = document.getElementById("btnTentarDeNovo");
+          if(b) b.addEventListener("click", function(){ carregarDados(true); });
+        }
+      })
+      .finally(function(){
+        btn.classList.remove("girando");
+      });
+  }
+
+  function carregarDoCache(){
+    try{
+      var estadoRaw = localStorage.getItem(CACHE_ESTADO);
+      var guiasRaw = localStorage.getItem(CACHE_GUIAS);
+      if(!estadoRaw) return false;
+      var estado = JSON.parse(estadoRaw);
+      materias = estado.materias || [];
+      guias = guiasRaw ? JSON.parse(guiasRaw) : {};
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function atualizarStatus(data, offline){
+    var status = document.getElementById("statusSync");
+    var texto = data ? ("Sincronizado às " + data.toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"}) + " de " + data.toLocaleDateString("pt-BR")) : "Sem dados sincronizados ainda.";
+    if(offline){
+      status.textContent = "Sem conexão agora — " + texto + " (dados salvos no aparelho)";
+      status.classList.add("offline");
+    } else {
+      status.textContent = texto;
+      status.classList.remove("offline");
+    }
+  }
+
+  function contarGuias(materia){
+    var total = materia.assuntos ? materia.assuntos.length : 0;
+    var comGuia = 0;
+    (materia.assuntos || []).forEach(function(a){ if(guias[a.id]) comGuia++; });
+    return { total: total, comGuia: comGuia };
+  }
+
+  function renderLista(){
+    var container = document.getElementById("listaConteudo");
+    container.innerHTML = "";
+
+    var termo = filtroAtual.trim().toLowerCase();
+    var algumResultado = false;
+
+    materias.forEach(function(materia){
+      var assuntos = materia.assuntos || [];
+      var assuntosFiltrados = termo
+        ? assuntos.filter(function(a){ return a.nome.toLowerCase().indexOf(termo) > -1; })
+        : assuntos;
+
+      if(termo && assuntosFiltrados.length === 0) return;
+      algumResultado = true;
+
+      var contagem = contarGuias(materia);
+
+      var grupo = document.createElement("div");
+      grupo.className = "grupo-materia";
+
+      var cab = document.createElement("div");
+      cab.className = "cab-materia";
+      cab.innerHTML =
+        "<span class='nome'>" + escapeHtml(materia.nome) + "</span>" +
+        "<span style='display:flex;align-items:center;gap:8px;'>" +
+        "<span class='contagem'>" + contagem.comGuia + "/" + contagem.total + " com guia</span>" +
+        "<svg class='seta' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>" +
+        "</span>";
+      cab.addEventListener("click", function(){
+        grupo.classList.toggle("fechado");
+      });
+      grupo.appendChild(cab);
+
+      var listaAssuntos = document.createElement("div");
+      listaAssuntos.className = "lista-assuntos";
+
+      assuntosFiltrados.forEach(function(assunto){
+        var temGuia = !!guias[assunto.id];
+        var linha = document.createElement("div");
+        linha.className = "linha-assunto " + (temGuia ? "com-guia" : "sem-guia");
+        linha.innerHTML =
+          "<span class='nome-assunto'>" + escapeHtml(assunto.nome) + "</span>" +
+          "<span class='marcador'></span>";
+        linha.addEventListener("click", function(){
+          if(temGuia){
+            abrirLeitura(materia, assunto, guias[assunto.id]);
+          } else {
+            mostrarToast("Ainda não tem guia cadastrado pra esse assunto.");
+          }
+        });
+        listaAssuntos.appendChild(linha);
+      });
+
+      grupo.appendChild(listaAssuntos);
+      container.appendChild(grupo);
+    });
+
+    if(!algumResultado){
+      container.innerHTML = "<div class='estado-vazio'>Nenhum assunto encontrado pra \"" + escapeHtml(filtroAtual) + "\".</div>";
+    }
+  }
+
+  function escapeHtml(str){
+    var div = document.createElement("div");
+    div.textContent = str || "";
+    return div.innerHTML;
+  }
+
+  function renderizarConteudoGuia(texto){
+    var escapado = escapeHtml(texto);
+    var reCor = new RegExp("\\{\\{(" + GUIA_CORES.join("|") + ")\\|([\\s\\S]*?)\\}\\}", "g");
+    var comMarcacoes = escapado.replace(reCor, function(match, cor, conteudo){
+      return "<mark class='g-mark g-mark-" + cor + "'>" + conteudo + "</mark>";
+    });
+    return comMarcacoes.replace(/\*\*([\s\S]+?)\*\*/g, "<strong>$1</strong>");
+  }
+
+  function abrirLeitura(materia, assunto, guia){
+    document.getElementById("tituloAssunto").textContent = assunto.nome;
+    document.getElementById("tituloMateria").textContent = materia.nome;
+    document.getElementById("corpoGuia").innerHTML = renderizarConteudoGuia(guia.texto || "");
+    var dataFmt = "";
+    if(guia.atualizadoEm){
+      try{ dataFmt = new Date(guia.atualizadoEm + "T00:00:00").toLocaleDateString("pt-BR"); }catch(e){ dataFmt = guia.atualizadoEm; }
+    }
+    document.getElementById("rodapeGuia").textContent = (guia.nomeArquivo ? guia.nomeArquivo + " · " : "") + (dataFmt ? "Atualizado em " + dataFmt : "");
+    document.getElementById("paginaLeitura").scrollTop = 0;
+    document.getElementById("telaLeitura").classList.add("aberta");
+  }
+
+  function fecharLeitura(){
+    document.getElementById("telaLeitura").classList.remove("aberta");
+  }
+
+  var toastTimeout = null;
+  function mostrarToast(msg){
+    var toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.classList.add("mostrar");
+    if(toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(function(){ toast.classList.remove("mostrar"); }, 3000);
+  }
+
+  document.getElementById("btnVoltar").addEventListener("click", fecharLeitura);
+  document.getElementById("btnAtualizar").addEventListener("click", function(){ carregarDados(true); });
+  document.getElementById("campoBusca").addEventListener("input", function(e){
+    filtroAtual = e.target.value;
+    renderLista();
+  });
+
+  // Início: mostra cache na hora (se existir) pra não deixar tela vazia, e busca dados novos em paralelo
+  var jaTinhaCache = carregarDoCache();
+  if(jaTinhaCache){
+    var syncSalvo = localStorage.getItem(CACHE_SYNC);
+    atualizarStatus(syncSalvo ? new Date(syncSalvo) : null, false);
+    renderLista();
+  }
+  carregarDados(false);
+</script>
+</body>
+</html>
